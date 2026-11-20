@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9bec273ec359124494e3d3350394e0f, type: 3}
+  m_Name: TriceratopsStats
+  m_EditorClassIdentifier: Assembly-CSharp::PrehistoricFrontiers.UnitStats
+  displayName: Triceratops
+  role: Vanguard
+  moveSpeed: 4
+  radius: 0.95
+  maxHealth: 180
+  attackDamage: 25
+  attackCooldown: 1.3
+  attackRange: 0.85
+  detectionRadius: 7
+  foodCost: 140
+  woodCost: 70
+  productionTime: 9
+  color: {r: 0.4392157, g: 0.67058825, b: 0.6901961, a: 1}
+  isWorker: 0

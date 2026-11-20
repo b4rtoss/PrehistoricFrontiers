@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9bec273ec359124494e3d3350394e0f, type: 3}
+  m_Name: MammothStats
+  m_EditorClassIdentifier: Assembly-CSharp::PrehistoricFrontiers.UnitStats
+  displayName: Mammoth
+  role: Heavy
+  moveSpeed: 2.8
+  radius: 1.15
+  maxHealth: 300
+  attackDamage: 44
+  attackCooldown: 2
+  attackRange: 1.4
+  detectionRadius: 7
+  foodCost: 220
+  woodCost: 120
+  productionTime: 14
+  color: {r: 0.6666667, g: 0.46666667, b: 0.39607844, a: 1}
+  isWorker: 0
