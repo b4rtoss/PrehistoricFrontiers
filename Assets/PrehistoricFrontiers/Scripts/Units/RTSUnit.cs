@@ -55,7 +55,7 @@ namespace PrehistoricFrontiers
             GetComponent<UnitCombat>()?.Hold();
             if (Agent && Agent.isOnNavMesh) Agent.ResetPath();
         }
-        public void Die()
+        public void Die(Vector3? attackerPosition = null)
         {
             if (!gameObject.activeSelf) return;
             GetComponent<UnitCombat>()?.battleController?.statistics?.RecordUnitLost(this);
@@ -63,6 +63,9 @@ namespace PrehistoricFrontiers
             SetSelected(false);
             Stop();
             if (Agent) Agent.enabled = false;
+            var reaction = GetComponent<UnitHitReaction>();
+            if (reaction) reaction.enabled = false;
+            UnitDeathVisual.Play(this, attackerPosition);
             gameObject.SetActive(false);
         }
     }

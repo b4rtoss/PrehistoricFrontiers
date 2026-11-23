@@ -44,7 +44,7 @@ namespace PrehistoricFrontiers
             if (TeamQueueCount >= QueueLimit) { Message = "All production slots are busy (3)"; return false; }
             if (ArmyAlive + TeamQueueCount >= PopulationLimit) { Message = "Population limit (20)"; return false; }
             var stats = Stats(type);
-            if (controller.IsPreparing && !stats.isWorker) { Message = "Подготовка: " + Mathf.CeilToInt(controller.PreparationRemaining) + " с"; return false; }
+            if (controller.IsPreparingFor(Team) && !stats.isWorker) { Message = "Подготовка: " + Mathf.CeilToInt(controller.PreparationRemaining) + " с"; return false; }
             if (!wallet.TrySpend(stats.foodCost, stats.woodCost)) { Message = "Not enough food or wood"; return false; }
             // Snapshot prices so edits to stats cannot change a previously paid refund.
             queue.Add(new Order { type = type, food = stats.foodCost, wood = stats.woodCost, duration = Mathf.Max(.1f, stats.productionTime) });

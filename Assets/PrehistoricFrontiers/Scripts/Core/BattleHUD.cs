@@ -217,7 +217,7 @@ namespace PrehistoricFrontiers
             else if (!controller.MatchOver && controller.Selected.Count == 1 && controller.Selected[0].GetComponent<UnitCombat>().HasAttackMove) status = "АТАКОВАТЬ ПО ПУТИ / Бой и продолжение маршрута";
             if(!controller.MatchOver && controller.SelectedClinic && controller.Selected.Count==0) status=controller.SelectedClinic.Summary;
             if(!controller.MatchOver && controller.Selected.Count==1 && controller.Selected[0].IsOnClinicOrder) status=controller.Selected[0].Treatment.Status;
-            if (controller.IsPreparing) status = "Подготовка: " + Mathf.CeilToInt(controller.PreparationRemaining) + " с / " + status;
+            if (controller.IsPreparing) status = "До наступления врага: " + Mathf.CeilToInt(controller.PreparationRemaining) + " с / " + status;
             if (controller.IsPaused) status = "ПАУЗА / Камера и мини-карта доступны / P — продолжить";
             GUI.Label(layout.Status, new GUIContent(status, status), statusStyle);
             GUI.enabled = CanIssueOrders;
@@ -253,7 +253,7 @@ namespace PrehistoricFrontiers
                 var stats = production.Stats(i); if (production.workersOnly && !stats.isWorker) continue;
                 string name = HudTheme.UnitName(stats.displayName);
                 string reason = controller.MatchOver ? "Матч завершён" : controller.IsPaused ? "Игра на паузе"
-                    : controller.IsPreparing && !stats.isWorker ? "Подготовка: " + Mathf.CeilToInt(controller.PreparationRemaining) + " с"
+                    : controller.IsPreparingFor(UnitTeam.Player) && !stats.isWorker ? "Подготовка: " + Mathf.CeilToInt(controller.PreparationRemaining) + " с"
                     : production.TeamQueueCount >= ProductionBuilding.QueueLimit ? "Все 3 места обучения заняты"
                     : controller.AlliesAlive + production.TeamQueueCount >= ProductionBuilding.PopulationLimit ? "Лимит отряда: 20"
                     : !production.wallet.CanAfford(stats.foodCost, stats.woodCost) ? "Недостаточно ресурсов" : "";

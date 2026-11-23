@@ -49,7 +49,7 @@ namespace PrehistoricFrontiers
                 Color color = new Color(.025f, .035f, .04f);
                 if (controller.HasExplored(UnitTeam.Player, p))
                 {
-                    color = new Color(.34f, .53f, .35f);
+                    color = GroundCover.Active ? GroundCover.Active.MapColor(p) : new Color(.34f, .53f, .35f);
                     foreach (var obstacle in obstacles)
                         if (p.x >= obstacle.min.x && p.x <= obstacle.max.x && p.z >= obstacle.min.z && p.z <= obstacle.max.z)
                         { color = new Color(.52f, .57f, .58f); break; }

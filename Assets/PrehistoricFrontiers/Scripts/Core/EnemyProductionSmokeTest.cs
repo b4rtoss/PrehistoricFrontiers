@@ -110,7 +110,10 @@ namespace PrehistoricFrontiers
             // Let the new defender approach: the economic fixture otherwise holds enemy units.
             var replacementCombat = replacement.GetComponent<UnitCombat>();
             replacementCombat.autoAcquire = true; replacementCombat.SetAutomation(true);
-            yield return Until(() => attack.Target == replacement, 2);
+            yield return Until(() => attack.Target == replacement || Vector3.Distance(ally.transform.position, replacement.transform.position) <= ally.stats.detectionRadius, 8);
+            Check(attack.Target == replacement || Vector3.Distance(ally.transform.position, replacement.transform.position) <= ally.stats.detectionRadius,
+                "replacement defender actually reaches automatic siege detection radius");
+            yield return Until(() => attack.Target == replacement, .7f);
             Check(attack.Target == replacement && !attack.BuildingTarget, "automatic siege reacts to approaching reinforcement defender");
             replacementCombat.autoAcquire = false; replacement.Stop();
             controller.SetAutoBattle(false);

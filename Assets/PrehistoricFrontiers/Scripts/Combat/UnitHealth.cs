@@ -16,8 +16,9 @@ namespace PrehistoricFrontiers
             unit = GetComponent<RTSUnit>();
             MaxHealth = Mathf.Max(1, unit.stats.maxHealth);
             CurrentHealth = MaxHealth;
+            if (!GetComponent<UnitHitReaction>()) gameObject.AddComponent<UnitHitReaction>();
         }
-        public void TakeDamage(float amount, UnitTeam? attackerTeam = null)
+        public void TakeDamage(float amount, UnitTeam? attackerTeam = null, Vector3? attackerPosition = null)
         {
             if (unit.IsInClinic || IsDepleted || float.IsNaN(amount) || float.IsInfinity(amount) || amount <= 0) return;
             bool hostile = attackerTeam.HasValue && attackerTeam.Value != unit.team;
@@ -26,9 +27,10 @@ namespace PrehistoricFrontiers
                 if (unit.team == UnitTeam.Player) unit.GetComponent<UnitCombat>()?.battleController?.alerts?.Notify(unit);
                 LastHostileDamageAt = Time.time;
                 BattleEffects.Hit(unit);
+                GetComponent<UnitHitReaction>()?.Play(attackerPosition);
             }
             CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
-            if (IsDepleted) unit.Die();
+            if (IsDepleted) unit.Die(attackerPosition);
             else if (hostile)
                 unit.GetComponent<WorkerGatherer>()?.RetreatForProtection();
         }

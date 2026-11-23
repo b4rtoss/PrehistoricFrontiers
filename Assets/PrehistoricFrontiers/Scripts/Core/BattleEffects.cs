@@ -54,7 +54,7 @@ namespace PrehistoricFrontiers
             if(!Active || !Active.controller || !Active.controller.CanSee(UnitTeam.Player,unit.transform.position))return;
             var direction=Vector3.ProjectOnPlane(Active.controller.sceneCamera.transform.position-unit.transform.position,Vector3.up).normalized;
             var point=unit.transform.position+Vector3.up*(unit.Agent.height*.65f)+direction*unit.stats.radius*.9f;
-            Burst(BattleEffect.Impact,point,5,Mathf.Clamp(unit.stats.radius,.5f,1.2f));
+            Burst(BattleEffect.Impact,point,9,Mathf.Clamp(unit.stats.radius,.7f,1.4f));
         }
         public static void Burst(BattleEffect effect,Vector3 position,int count,float scale=1)
         {

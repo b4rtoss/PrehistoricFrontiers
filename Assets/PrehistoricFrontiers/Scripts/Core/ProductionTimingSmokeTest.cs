@@ -47,7 +47,8 @@ namespace PrehistoricFrontiers
             if(!player || !enemy){Application.Quit(1);yield break;}
             c.preparationDuration=c.statistics.Duration+2;
             int food=enemy.wallet.Food;
-            Check(!player.TryQueue(0) && !enemy.TryQueue(0) && enemy.wallet.Food==food,"same preparation gate blocks combat training on both sides without spending");
+            Check(player.TryQueue(0) && !enemy.TryQueue(0) && enemy.wallet.Food==food,"preparation blocks only enemy combat training and leaves player available");
+            player.CancelAll();
             yield return Until(()=>!c.IsPreparing,3);
             var enemyTimes = new Dictionary<string, float>();
             enemy.UnitProduced += u => { if (!enemyTimes.ContainsKey(u.stats.displayName)) enemyTimes[u.stats.displayName] = Time.time; };

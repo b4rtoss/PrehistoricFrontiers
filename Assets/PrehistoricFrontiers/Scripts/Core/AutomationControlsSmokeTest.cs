@@ -44,7 +44,14 @@ namespace PrehistoricFrontiers
             Check(attack.Order == UnitOrder.Idle && !unit.Agent.hasPath && !controller.AutoBattleEnabled, "scout toggle cancels scout path only");
             controller.SetAutoBattle(true);
             yield return new WaitForSeconds(.4f);
-            Check(!controller.AutoScoutEnabled && !attack.Target && attack.Order != UnitOrder.Scout && !unit.Agent.hasPath, "battle only does not explore when enemies are unseen");
+            Check(!controller.AutoScoutEnabled && !attack.Target && attack.Order == UnitOrder.Scout && unit.Agent.hasPath, "battle alone searches for unseen enemies without requiring scout toggle");
+            destination = unit.Agent.destination;
+            controller.SetAutoScout(false);
+            Check(attack.Order == UnitOrder.Scout && unit.Agent.hasPath && unit.Agent.destination == destination,
+                "scout off preserves search required by enabled auto battle");
+            controller.SetAutoBattle(false);
+            Check(attack.Order == UnitOrder.Idle && !unit.Agent.hasPath, "battle off stops automatic search when scouting is off");
+            controller.SetAutoBattle(true);
             Check(unit.Agent.Warp(new Vector3(-10, 0, 8)), "unit placed near visible opponent"); controller.fog.RefreshNow();
             yield return Until(() => attack.Target == enemy, 2);
             Check(attack.Target == enemy && attack.IsAutomaticAttack && !controller.AutoScoutEnabled, "battle only acquires visible enemy");

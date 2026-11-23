@@ -25,9 +25,10 @@ namespace PrehistoricFrontiers
             yield return null; Time.timeScale = 4;
             var c = FindAnyObjectByType<RTSSelectionController>();
             Check(!c.AutoBattleEnabled && !c.AutoScoutEnabled, "saved scene starts with allied battle and scouting disabled");
-            SmokeTestSetup.DisableEnemyProduction(c,false); c.preparationDuration=20;
+            Check(!c.IsPreparingFor(UnitTeam.Player) && c.IsPreparingFor(UnitTeam.Enemy), "saved scene delays only enemy combat");
+            SmokeTestSetup.DisableEnemyProduction(c,false);
             var positions=new Vector3[c.units.Length];for(int i=0;i<c.units.Length;i++)positions[i]=c.units[i].transform.position;
-            yield return new WaitForSeconds(23);
+            yield return new WaitForSeconds(1);
             bool stationary=true,idle=true;
             for(int i=0;i<c.units.Length;i++)
             {
@@ -35,8 +36,8 @@ namespace PrehistoricFrontiers
                 stationary &= Vector3.Distance(unit.transform.position,positions[i])<.05f;
                 idle &= !unit.Agent.hasPath && !combat.Target && !combat.BuildingTarget && combat.Order!=UnitOrder.Scout;
             }
-            Check(!c.IsPreparing && stationary && idle, "allied units remain idle after preparation without any player order");
-            Check(!c.AutoBattleEnabled && !c.AutoScoutEnabled, "preparation completion does not enable allied automation");
+            Check(!c.IsPreparing && stationary && idle, "allied units wait for player orders without a preparation phase");
+            Check(!c.AutoBattleEnabled && !c.AutoScoutEnabled, "instant match start does not enable allied automation");
             Check(c.AutoBattleFor(UnitTeam.Enemy) && c.AutoScoutFor(UnitTeam.Enemy), "allied defaults leave enemy automation independent");
             var enemy=c.enemies[0];enemy.Agent.Warp(c.units[0].transform.position+Vector3.right*4);
             yield return new WaitForSeconds(.5f);
@@ -48,7 +49,7 @@ namespace PrehistoricFrontiers
             var previous=c;c.RestartMatch();yield return null;
             c=FindAnyObjectByType<RTSSelectionController>();
             Check(c && c!=previous && !c.AutoBattleEnabled && !c.AutoScoutEnabled, "restart restores disabled automation even after both modes were enabled");
-            Check(c && c.IsPreparing && c.AlliesAlive==4, "restart restores preparation and complete starting army");
+            Check(c && !c.IsPreparingFor(UnitTeam.Player) && c.IsPreparingFor(UnitTeam.Enemy) && c.AlliesAlive==4, "restart preserves enemy-only preparation and complete starting army");
             Application.Quit(failed ? 1:0);
         }
     }

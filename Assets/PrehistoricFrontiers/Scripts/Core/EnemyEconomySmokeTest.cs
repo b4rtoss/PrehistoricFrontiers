@@ -38,13 +38,12 @@ namespace PrehistoricFrontiers
             foreach (var unit in c.units) unit.Stop(); HoldFighters();
             var main = c.enemyBase.GetComponent<ProductionBuilding>(); var ai = main.GetComponent<EnemyProductionAI>();
             var economy = main.GetComponent<EnemyEconomyAI>(); ai.enabled = false;
-            Check(c.IsPreparing && c.preparationDuration == 20 && c.units.Length == 4 && c.enemies.Length == 4,
-                "both factions start with four units and a shared twenty second preparation phase");
+            Check(!c.IsPreparingFor(UnitTeam.Player) && c.IsPreparingFor(UnitTeam.Enemy) && c.units.Length == 4 && c.enemies.Length == 4,
+                "both factions start with four units and only enemy combat waits");
             Check(economy.WorkersAlive == 1 && main.wallet.Food == 1000 && main.wallet.Wood == 1000
                 && c.construction.main.wallet.Food == 1000 && c.construction.main.wallet.Wood == 1000,
                 "both factions have one worker and equal starting resources");
-            Check(main.workersOnly && !main.TryQueue(0) && !c.units[0].GetComponent<UnitCombat>().Attack(c.enemies[0]),
-                "main base cannot train warriors and attacks cannot bypass preparation");
+            Check(main.workersOnly && !main.TryQueue(0), "main base cannot train warriors");
             var nodes = Array.FindAll(FindObjectsByType<ResourceNode>(), n => n.name.StartsWith("Enemy "));
             int stock = Stock(nodes);
             Check(nodes.Length == 4 && stock == 900, "enemy has two food and two wood deposits with matching reserves");

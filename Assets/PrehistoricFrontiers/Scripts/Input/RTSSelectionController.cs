@@ -18,6 +18,7 @@ namespace PrehistoricFrontiers
         public float preparationDuration = 20;
         public float PreparationRemaining => Mathf.Max(0, preparationDuration - (statistics ? statistics.Duration : Time.timeSinceLevelLoad));
         public bool IsPreparing => PreparationRemaining > 0;
+        public bool IsPreparingFor(UnitTeam team) => team == UnitTeam.Enemy && IsPreparing;
         bool matchEndHandled;
 
         public void FinishMatchIfEnded()
@@ -111,7 +112,7 @@ namespace PrehistoricFrontiers
         {
             autoBattleEnabled = enabled;
             foreach (var unit in units) if (unit && unit.IsAlive) unit.GetComponent<UnitCombat>()?.SetAutomation(enabled);
-            Status = enabled ? "Auto battle ON / Armies engage automatically" : "Auto battle OFF / Give manual orders";
+            Status = enabled ? "Автобой ВКЛ / Бойцы ищут противника и атакуют" : "Автобой ВЫКЛ / Отдавайте приказы вручную";
         }
         public readonly List<RTSUnit> Selected = new List<RTSUnit>();
         public string Status { get; private set; } = "Выберите отряд и отдайте приказ / G — автобой / H — разведка";

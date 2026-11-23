@@ -30,7 +30,7 @@ namespace PrehistoricFrontiers
         void OnDisable() { active.Remove(this); if (strike) strike.gameObject.SetActive(false); }
         public bool Attack(RTSUnit target)
         {
-            if (battleController && (battleController.IsPaused || battleController.IsPreparing)) return false;
+            if (battleController && (battleController.IsPaused || battleController.IsPreparingFor(unit.team))) return false;
             if (unit.stats.isWorker || !unit.IsAvailable || !target || !target.IsAvailable || target.team == unit.team) return false;
             if (battleController && !battleController.CanSee(unit.team, target.transform.position)) return false;
             unit.Treatment?.Cancel();
@@ -40,7 +40,7 @@ namespace PrehistoricFrontiers
         }
         public bool Attack(BuildingHealth building)
         {
-            if (battleController && (battleController.IsPaused || battleController.IsPreparing)) return false;
+            if (battleController && (battleController.IsPaused || battleController.IsPreparingFor(unit.team))) return false;
             if (unit.stats.isWorker || !unit.IsAvailable || !building || !building.IsAlive || building.team == unit.team || (battleController && battleController.MatchOver)) return false;
             if (battleController && !battleController.CanSee(unit.team, building.transform.position)) return false;
             unit.Treatment?.Cancel();
@@ -123,7 +123,7 @@ namespace PrehistoricFrontiers
         public void Hold() { SetOrder(UnitOrder.Hold); }
         public void SetAutomation(bool enabled)
         {
-            if (!enabled && IsAutomaticAttack)
+            if (!enabled && (IsAutomaticAttack || Order == UnitOrder.Scout && (!battleController || !battleController.AutoScoutFor(unit.team))))
             {
                 Target = null; BuildingTarget = null; Order = UnitOrder.Idle; IsAutomaticAttack = false;
                 RestoreMovementStoppingDistance();
@@ -134,7 +134,7 @@ namespace PrehistoricFrontiers
         }
         public void SetScoutAutomation(bool enabled)
         {
-            if (!enabled && Order == UnitOrder.Scout)
+            if (!enabled && Order == UnitOrder.Scout && (!battleController || !battleController.AutoBattleFor(unit.team)))
             {
                 Order = UnitOrder.Idle; IsAutomaticAttack = false;
                 RestoreMovementStoppingDistance();
@@ -149,7 +149,7 @@ namespace PrehistoricFrontiers
             if (strike) strike.gameObject.SetActive(Time.time < strikeUntil);
             if (unit.IsOnClinicOrder || unit.stats.isWorker || !unit.IsAvailable || !unit.Agent || !unit.Agent.isOnNavMesh) return;
             if (battleController && battleController.MatchOver) { unit.Agent.ResetPath(); Hold(); return; }
-            if (battleController && battleController.IsPreparing) return;
+            if (battleController && battleController.IsPreparingFor(unit.team)) return;
             if (Order == UnitOrder.Move)
             {
                 if (!unit.Agent.pathPending && (!unit.Agent.hasPath || unit.Agent.remainingDistance <= unit.Agent.stoppingDistance + .1f)) Order = UnitOrder.Idle;
@@ -183,7 +183,7 @@ namespace PrehistoricFrontiers
             if (BuildingTarget) { UpdateBuildingAttack(); return; }
             if (!Target)
             {
-                if (autoAcquire && battleController && battleController.AutoScoutFor(unit.team) && battleController.fog && battleController.fog.Active)
+                if (autoAcquire && battleController && (battleController.AutoScoutFor(unit.team) || battleController.AutoBattleFor(unit.team)) && battleController.fog && battleController.fog.Active)
                 {
                     bool arrived = !unit.Agent.pathPending && (!unit.Agent.hasPath || unit.Agent.remainingDistance <= unit.Agent.stoppingDistance + .2f);
                     if (Order == UnitOrder.Scout && Time.time >= scoutProgressCheck)
@@ -214,7 +214,7 @@ namespace PrehistoricFrontiers
                 {
                     nextAttackAt = Time.time + Mathf.Max(.1f, unit.stats.attackCooldown);
                     ShowStrike(from, to);
-                    Target.GetComponent<UnitHealth>().TakeDamage(unit.stats.attackDamage, unit.team);
+                    Target.GetComponent<UnitHealth>().TakeDamage(unit.stats.attackDamage, unit.team, unit.transform.position);
                 }
             }
             else if (Time.time >= nextPathAt)
