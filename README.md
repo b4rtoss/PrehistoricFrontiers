@@ -43,3 +43,4 @@ The game is a playable prototype under development. It currently has one battle 
 - [Unity implementation and technical decisions (Russian)](docs/portfolio-unity.md)
 - [Game design and changes after playtesting (Russian)](docs/portfolio-game-design.md)
 - [Project verification report](docs/verification.md)
+- [Economy model: sources, sinks, and progression](docs/economy/README.md)
